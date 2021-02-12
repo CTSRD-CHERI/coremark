@@ -29,7 +29,7 @@ Original Author: Shay Gal-on
 	Define to 1 if the platform supports floating point.
 */
 #ifndef HAS_FLOAT
-#define HAS_FLOAT 1
+#define HAS_FLOAT 0
 #endif
 /* Configuration: HAS_TIME_H
 	Define to 1 if platform has the time.h header file,
@@ -89,8 +89,7 @@ typedef clock_t CORE_TICKS;
  #define COMPILER_FLAGS FLAGS_STR /* "Please put compiler flags here (e.g. -o3)" */
 #endif
 #ifndef MEM_LOCATION
- #define MEM_LOCATION "Please put data memory location here\n\t\t\t(e.g. code in flash, data on heap etc)"
- #define MEM_LOCATION_UNSPEC 1
+ #define MEM_LOCATION "STACK"
 #endif
 
 /* Data Types:
@@ -106,7 +105,7 @@ typedef double ee_f32;
 typedef unsigned char ee_u8;
 typedef unsigned int ee_u32;
 //#if __has_feature(capabilities)
-#if 0
+#if __CHERI_PURE_CAPABILITY__
 typedef __intcap_t ee_ptr_int;
 #else
 typedef unsigned long ee_ptr_int;
@@ -128,7 +127,7 @@ typedef size_t ee_size_t;
 	SEED_VOLATILE - from volatile variables.
 */
 #ifndef SEED_METHOD
-#define SEED_METHOD SEED_ARG
+#define SEED_METHOD SEED_VOLATILE
 #endif
 
 /* Configuration: MEM_METHOD
@@ -140,7 +139,7 @@ typedef size_t ee_size_t;
 	MEM_STACK - to allocate the data block on the stack (NYI).
 */
 #ifndef MEM_METHOD
-#define MEM_METHOD MEM_MALLOC
+#define MEM_METHOD MEM_STACK
 #endif
 
 /* Configuration: MULTITHREAD
@@ -215,7 +214,7 @@ typedef size_t ee_size_t;
 	1 - argc/argv to main is not supported
 */
 #ifndef MAIN_HAS_NOARGC
-#define MAIN_HAS_NOARGC 0
+#define MAIN_HAS_NOARGC 1
 #endif
 
 /* Configuration: MAIN_HAS_NORETURN
