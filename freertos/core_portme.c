@@ -83,7 +83,7 @@ void portable_free(void *p) {
 	If there are issues with the return value overflowing, increase this value.
 	*/
 #define CORETIMETYPE uint64_t
-#define GETMYTIME(_t) (*_t=portGET_RUN_TIME_COUNTER_VALUE())
+#define GETMYTIME(_t) (*_t=get_cycle_count())
 #define MYTIMEDIFF(fin,ini) ((fin)-(ini))
 #define EE_TICKS_PER_SEC configCPU_CLOCK_HZ
 
