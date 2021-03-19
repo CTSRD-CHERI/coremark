@@ -22,6 +22,11 @@ Original Author: Shay Gal-on
 #include "coremark.h"
 #include <FreeRTOS.h>
 #include <FreeRTOSConfig.h>
+
+#if configPORT_HAS_HPM_COUNTERS
+#include "portstatcounters.h"
+#endif /* configPORT_HAS_HPM_COUNTERS */
+
 #if CALLGRIND_RUN
 #include <valgrind/callgrind.h>
 #endif
@@ -90,6 +95,39 @@ void portable_free(void *p) {
 /** Define Host specific (POSIX), or target specific global time variables. */
 static CORETIMETYPE start_time_val, stop_time_val;
 
+#if configPORT_HAS_HPM_COUNTERS
+static uint64_t xStartInstRet, xEndInstRet;
+static uint64_t xStartDCacheLoad, xEndDCacheLoad;
+static uint64_t xStartDCacheMiss, xEndDCacheMiss;
+static uint64_t xStartICacheLoad, xEndICacheLoad;
+static uint64_t xStartICacheMiss, xEndICacheMiss;
+static uint64_t xStartL2CacheMiss, xEndL2CacheMiss;
+
+uint64_t get_instret(void) {
+    return xEndInstRet - xStartInstRet;
+}
+
+uint64_t get_dcache_loads(void) {
+    return xEndDCacheLoad - xStartDCacheLoad;
+}
+
+uint64_t get_dcache_misses(void) {
+    return xEndDCacheMiss - xStartDCacheMiss;
+}
+
+uint64_t get_icache_loads(void) {
+    return xEndICacheLoad - xStartICacheLoad;
+}
+
+uint64_t get_icache_misses(void) {
+    return xEndICacheMiss - xStartICacheMiss;
+}
+
+uint64_t get_l2cache_misses(void) {
+    return xEndL2CacheMiss - xStartL2CacheMiss;
+}
+#endif /* configPORT_HAS_HPM_COUNTERS */
+
 /* Function: start_time
 	This function will be called right before starting the timed portion of the benchmark.
 
@@ -97,6 +135,15 @@ static CORETIMETYPE start_time_val, stop_time_val;
 	or zeroing some system parameters - e.g. setting the cpu clocks cycles to 0.
 */
 void start_time(void) {
+#if configPORT_HAS_HPM_COUNTERS
+    xStartDCacheLoad = portCounterGet(COUNTER_DCACHE_LOAD);
+    xStartDCacheMiss = portCounterGet(COUNTER_DCACHE_LOAD_MISS);
+    xStartICacheLoad = portCounterGet(COUNTER_ICACHE_LOAD);
+    xStartICacheMiss = portCounterGet(COUNTER_ICACHE_LOAD_MISS);
+    xStartL2CacheMiss = portCounterGet(COUNTER_LLCACHE_LOAD_MISS);
+    xStartInstRet = portCounterGet(COUNTER_INSTRET);
+#endif /* configPORT_HAS_HPM_COUNTERS */
+
 	GETMYTIME(&start_time_val );
 }
 /* Function: stop_time
@@ -107,6 +154,15 @@ void start_time(void) {
 */
 void stop_time(void) {
 	GETMYTIME(&stop_time_val );
+
+#if configPORT_HAS_HPM_COUNTERS
+    xEndInstRet = portCounterGet(COUNTER_INSTRET);
+    xEndDCacheLoad = portCounterGet(COUNTER_DCACHE_LOAD);
+    xEndDCacheMiss = portCounterGet(COUNTER_DCACHE_LOAD_MISS);
+    xEndICacheLoad = portCounterGet(COUNTER_ICACHE_LOAD);
+    xEndICacheMiss = portCounterGet(COUNTER_ICACHE_LOAD_MISS);
+    xEndL2CacheMiss = portCounterGet(COUNTER_LLCACHE_LOAD_MISS);
+#endif /* configPORT_HAS_HPM_COUNTERS */
 }
 /* Function: get_time
 	Return an abstract "ticks" number that signifies time on the system.

@@ -306,6 +306,16 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	if (time_in_secs(total_time) > 0)
 		ee_printf("Iterations/Sec   : %d\n",default_num_contexts*results[0].iterations/time_in_secs(total_time));
 #endif
+
+#if configPORT_HAS_HPM_COUNTERS
+	ee_printf("HPM instret: %lu\n", (long unsigned) get_instret());
+	ee_printf("HPM dcache_loads: %lu\n", (long unsigned) get_dcache_loads());
+	ee_printf("HPM dcache_misses: %lu\n", (long unsigned) get_dcache_misses());
+	ee_printf("HPM icache_loads: %lu\n", (long unsigned) get_icache_loads());
+	ee_printf("HPM icache_misses: %lu\n", (long unsigned) get_icache_misses());
+	ee_printf("HPM l2cache_misses: %lu\n", (long unsigned) get_l2cache_misses());
+#endif /* configPORT_HAS_HPM_COUNTERS */
+
 	if (time_in_secs(total_time) < 10) {
 		ee_printf("ERROR! Must execute for at least 10 secs for a valid result!\n");
 		total_errors++;
