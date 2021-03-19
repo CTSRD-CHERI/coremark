@@ -75,6 +75,8 @@ typedef clock_t CORE_TICKS;
 #error "Please define type of CORE_TICKS and implement start_time, end_time get_time and time_in_secs functions!"
 #endif
 
+#include <FreeRTOSConfig.h>
+
 /* Definitions: COMPILER_VERSION, COMPILER_FLAGS, MEM_LOCATION
 	Initialize these strings per platform
 */
