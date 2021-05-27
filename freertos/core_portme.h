@@ -70,7 +70,7 @@ Original Author: Shay Gal-on
 typedef size_t CORE_TICKS;
 #elif HAS_TIME_H
 #include <time.h>
-typedef clock_t CORE_TICKS;
+typedef uint64_t CORE_TICKS;
 #else
 #error "Please define type of CORE_TICKS and implement start_time, end_time get_time and time_in_secs functions!"
 #endif
