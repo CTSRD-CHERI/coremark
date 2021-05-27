@@ -34,6 +34,7 @@ Original Author: Shay Gal-on
 #include <bsp.h>
 
 int main( int, char ** );
+uint64_t get_cycle_count();
 
 #if (MEM_METHOD==MEM_MALLOC)
 /* Function: portable_malloc
