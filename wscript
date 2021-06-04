@@ -52,10 +52,10 @@ def build(bld):
     name = "coremark"
     print("Building CoreMark Benchmarking Demo")
 
-    cflags = []
+    cflags = ['-static', '-std=gnu99', '-ffast-math', '-fno-common']
 
     if bld.env.COMPARTMENTALIZE:
-        cflags = ['-cheri-cap-table-abi=gprel']
+        cflags += ['-cheri-cap-table-abi=gprel']
 
     bld.stlib(
         features=['c'],
