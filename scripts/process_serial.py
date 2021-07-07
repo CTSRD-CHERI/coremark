@@ -38,12 +38,14 @@ import os.path
 from os import path
 import json
 import csv
+from json2html import *
 
 # Args
 parser = argparse.ArgumentParser(description='Process serial output from a CoreMark run.')
 parser.add_argument("--input-logfile", help="The file path to read serial output from", default='')
 parser.add_argument("--output-csv", help="The file path to write output csv data to", default='output.csv')
 parser.add_argument("--output-json", help="The file path to write output json data to", default='output.json')
+parser.add_argument("--output-html", help="The file path to write output json data to", default='output.html')
 parser.add_argument("--freq-mhz", help="The frequency in MHz for this run", default=100)
 args = parser.parse_args()
 
@@ -94,6 +96,9 @@ with open(args.input_logfile) as logfile:
       if counter in line:
          hpm_counters[counter] = float(line.split(':')[1])
 
+json_object = json.dumps(hpm_counters, indent = 4)
+print(json_object)
+
 with open(args.output_csv,'w') as f:
     w = csv.writer(f)
     w.writerows(hpm_counters.items())
@@ -101,5 +106,6 @@ with open(args.output_csv,'w') as f:
 with open(args.output_json, 'w') as outfile:
     json.dump(hpm_counters, outfile, indent = 4)
 
-json_object = json.dumps(hpm_counters, indent = 4)
-print(json_object)
+with open(args.output_html,'w') as f:
+    output_html = json2html.convert(json = json_object)
+    f.write(output_html)
