@@ -93,7 +93,7 @@ hpm_counters["CoreMark/MHz"] = hpm_counters["ITERATIONS/SECOND"] / float(args.fr
 with open(args.input_logfile) as logfile:
   for line in logfile:
     for counter in hpm_counters:
-      if counter in line:
+      if counter+':' in line:
          hpm_counters[counter] = float(line.split(':')[1])
 
 json_object = json.dumps(hpm_counters, indent = 4)
