@@ -292,12 +292,7 @@ void portable_init(core_portable *p, int *argc, char *argv[]);
 void portable_fini(core_portable *p);
 
 #if configPORT_HAS_HPM_COUNTERS
-uint64_t get_instret(void);
-uint64_t get_dcache_loads(void);
-uint64_t get_dcache_misses(void);
-uint64_t get_icache_loads(void);
-uint64_t get_icache_misses(void);
-uint64_t get_l2cache_misses(void);
+void print_hpms(void);
 #endif
 
 #if (SEED_METHOD==SEED_VOLATILE)

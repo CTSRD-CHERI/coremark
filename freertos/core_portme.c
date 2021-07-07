@@ -97,36 +97,14 @@ void portable_free(void *p) {
 static CORETIMETYPE start_time_val, stop_time_val;
 
 #if configPORT_HAS_HPM_COUNTERS
-static uint64_t xStartInstRet, xEndInstRet;
-static uint64_t xStartDCacheLoad, xEndDCacheLoad;
-static uint64_t xStartDCacheMiss, xEndDCacheMiss;
-static uint64_t xStartICacheLoad, xEndICacheLoad;
-static uint64_t xStartICacheMiss, xEndICacheMiss;
-static uint64_t xStartL2CacheMiss, xEndL2CacheMiss;
+cheri_riscv_hpms start_hpms;
+cheri_riscv_hpms end_hpms;
 
-uint64_t get_instret(void) {
-    return xEndInstRet - xStartInstRet;
+void print_hpms(void) {
+    PortStatCounters_DiffAll(&start_hpms, &end_hpms, &end_hpms);
+    PortStatCounters_PrintAll(&end_hpms);
 }
 
-uint64_t get_dcache_loads(void) {
-    return xEndDCacheLoad - xStartDCacheLoad;
-}
-
-uint64_t get_dcache_misses(void) {
-    return xEndDCacheMiss - xStartDCacheMiss;
-}
-
-uint64_t get_icache_loads(void) {
-    return xEndICacheLoad - xStartICacheLoad;
-}
-
-uint64_t get_icache_misses(void) {
-    return xEndICacheMiss - xStartICacheMiss;
-}
-
-uint64_t get_l2cache_misses(void) {
-    return xEndL2CacheMiss - xStartL2CacheMiss;
-}
 #endif /* configPORT_HAS_HPM_COUNTERS */
 
 /* Function: start_time
@@ -137,12 +115,7 @@ uint64_t get_l2cache_misses(void) {
 */
 void start_time(void) {
 #if configPORT_HAS_HPM_COUNTERS
-    xStartDCacheLoad = portCounterGet(COUNTER_DCACHE_LOAD);
-    xStartDCacheMiss = portCounterGet(COUNTER_DCACHE_LOAD_MISS);
-    xStartICacheLoad = portCounterGet(COUNTER_ICACHE_LOAD);
-    xStartICacheMiss = portCounterGet(COUNTER_ICACHE_LOAD_MISS);
-    xStartL2CacheMiss = portCounterGet(COUNTER_LLCACHE_LOAD_MISS);
-    xStartInstRet = portCounterGet(COUNTER_INSTRET);
+    PortStatCounters_ReadAll(&start_hpms);
 #endif /* configPORT_HAS_HPM_COUNTERS */
 
 	GETMYTIME(&start_time_val );
@@ -157,12 +130,7 @@ void stop_time(void) {
 	GETMYTIME(&stop_time_val );
 
 #if configPORT_HAS_HPM_COUNTERS
-    xEndInstRet = portCounterGet(COUNTER_INSTRET);
-    xEndDCacheLoad = portCounterGet(COUNTER_DCACHE_LOAD);
-    xEndDCacheMiss = portCounterGet(COUNTER_DCACHE_LOAD_MISS);
-    xEndICacheLoad = portCounterGet(COUNTER_ICACHE_LOAD);
-    xEndICacheMiss = portCounterGet(COUNTER_ICACHE_LOAD_MISS);
-    xEndL2CacheMiss = portCounterGet(COUNTER_LLCACHE_LOAD_MISS);
+    PortStatCounters_ReadAll(&end_hpms);
 #endif /* configPORT_HAS_HPM_COUNTERS */
 }
 /* Function: get_time
