@@ -54,7 +54,7 @@ def build(bld):
 
     cflags = ['-static', '-std=gnu99', '-ffast-math', '-fno-common']
 
-    if bld.env.COMPARTMENTALIZE:
+    if bld.env.COMPARTMENTALIZE and bld.env.PURECAP:
         cflags += ['-cheri-cap-table-abi=gprel']
 
     bld.stlib(
