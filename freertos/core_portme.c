@@ -22,6 +22,7 @@ Original Author: Shay Gal-on
 #include "coremark.h"
 #include <FreeRTOS.h>
 #include <FreeRTOSConfig.h>
+#include "task.h"
 
 #if configPORT_HAS_HPM_COUNTERS
 #include "portstatcounters.h"
@@ -114,6 +115,9 @@ void print_hpms(void) {
 	or zeroing some system parameters - e.g. setting the cpu clocks cycles to 0.
 */
 void start_time(void) {
+    /* Disable interrupts and preemption */
+    taskENTER_CRITICAL();
+
 #if configPORT_HAS_HPM_COUNTERS
     PortStatCounters_ReadAll(&start_hpms);
 #endif /* configPORT_HAS_HPM_COUNTERS */
@@ -132,6 +136,9 @@ void stop_time(void) {
 #if configPORT_HAS_HPM_COUNTERS
     PortStatCounters_ReadAll(&end_hpms);
 #endif /* configPORT_HAS_HPM_COUNTERS */
+
+    /* Enable interrupts and preemption */
+    taskEXIT_CRITICAL();
 }
 /* Function: get_time
 	Return an abstract "ticks" number that signifies time on the system.
